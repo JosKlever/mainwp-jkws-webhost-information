@@ -2,7 +2,7 @@
 /**
  * Plugin Name: JKWS Webhost Information for MainWP
  * Description: Adds the Webhost field to child sites.
- * Version: 0.9.1
+ * Version: 0.9.2
  * Author: Jos Klever
  * Author URI: https://joskleverwebsupport.nl
  * Plugin URI: https://github.com/josklever/mainwp-jkws-webhost-information
@@ -25,7 +25,7 @@ function jkws_mainwp_manage_sites_edit( $website ) {
 	$webhost  = apply_filters( 'mainwp_getwebsiteoptions', false, $website, 'webhost' );
 	?>
 	<h3 class="ui dividing header">Additional information (Optional)</h3>
-	<div class="ui grid field">
+	<div class="ui grid field mainwp_addition_fields_addsite">
 		<label class="six wide column middle aligned"><?php esc_html_e( 'Webhost', 'mainwp' ); ?></label>
 		<div class="ui six wide column" data-tooltip="<?php esc_attr_e( 'Webhost', 'mainwp' ); ?>" data-inverted="" data-position="top left">
 			<div class="ui left labeled input">
@@ -36,9 +36,11 @@ function jkws_mainwp_manage_sites_edit( $website ) {
 	<?php
 }
 
+//  Update the Webhost field in the database of the added new site
+add_action( 'mainwp_site_added', 'jkws_save_webhost', 10, 1 );
 //  Update the Webhost field in the database of the edited site
-add_action( 'mainwp_update_site', 'jkws_mainwp_update_site', 10, 1 );
-function jkws_mainwp_update_site( $site_id ) {
+add_action( 'mainwp_update_site', 'jkws_save_webhost', 10, 1 );
+function jkws_save_webhost( $site_id ) {
 	$webhost = isset( $_POST['mainwp_managesites_edit_webhost'] ) ? sanitize_text_field( wp_unslash( $_POST['mainwp_managesites_edit_webhost'] ) ) : '';
 	apply_filters( 'mainwp_updatewebsiteoptions', false, $site_id, 'webhost', $webhost );	
 }
